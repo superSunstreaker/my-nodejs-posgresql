@@ -20,6 +20,25 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+router.get('/:id', async function(req, res, next) {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      res.status(400).json({message: 'Invalid ID'});
+      return;
+    }
+    const result = await quotes.getById(id);
+    if (result) {
+      res.json({code: 200, data: result});
+    } else {
+      res.status(404).json({message: 'Quote not found'});
+    }
+  } catch (err) {
+    console.error(`Error while getting quote by ID `, err.message);
+    res.status(err.statusCode || 500).json({'message': err.message});
+  }
+});
+
 /* POST quotes */
 router.post('/', async function(req, res, next) {
   try {
